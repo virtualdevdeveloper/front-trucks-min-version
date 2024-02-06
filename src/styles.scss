@@ -1,1 +1,60 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+/* You can add global styles to this file, and also import other style files */
+.modal-holder {
+  animation-name: example;
+  animation-duration: 0.3s;
+}
+
+@keyframes example {
+  0% {
+    transform: scale(0.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.carousel-item {
+  transition: opacity 0.7s ease !important;
+  position: absolute !important;
+  display: block !important;
+  opacity: 0;
+}
+
+.carousel-item.active {
+  position: relative !important;
+  opacity: 1;
+}
+
+.customClass .modal-dialog {
+  max-width: 500px;
+}
+
+.customClassNotification .modal-dialog {
+  max-width: 875px;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: #2a3042;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

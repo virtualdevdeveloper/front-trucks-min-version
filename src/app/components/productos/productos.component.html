@@ -1,0 +1,196 @@
+<div class="container-fluid">
+  <div class="custom-column">
+    <div class="custom-model-child">
+      <app-rubros></app-rubros>
+    </div>
+    <div class="custom-model-child">
+        <h1>Productos</h1>
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-sm-4">
+                  <div
+                    class="search-box me-2 mb-2 d-inline-block"
+                    style="width: 15vw"
+                  >
+                    <div class="position-relative">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Buscar producto"
+                        [(ngModel)]="term"
+                      />
+                      <i class="bx bx-search-alt search-icon"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-8">
+                  <div class="text-sm-end">
+                    <button
+                      type="button"
+                      class="btn btn-success btn-rounded mb-2 mr-2"
+                      (click)="openModal(content)"
+                    >
+                      <i class="mdi mdi-plus me-1"></i> Nuevo Producto
+                    </button>
+                  </div>
+                </div>
+                <!-- end col-->
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle table-nowrap">
+                  <thead>
+                    <tr>
+                      <th>Descripción</th>
+                      <th>Rubro</th>
+                      <th>Editar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let product of productos
+                          | customfilter : term : 'productoDescripcion'
+                          | paginate : { itemsPerPage: 10, currentPage: p }
+                      "
+                    >
+                      <td>{{ product.productoDescripcion }}</td>
+                      <td>{{ product.productRubroDescripcion }}</td>
+                      <td style="width: 0px">
+                        <button
+                          class="btn btn-success"
+                          (click)="editarProducto(content2, product)"
+                        >
+                          <i class="bx bxs-edit-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div
+                *ngIf="!loadedData"
+                class="d-flex align-items-center justify-content-center"
+              >
+                <span class="loader"></span>
+              </div>
+              <div *ngIf="loadedData">
+                <pagination-controls
+                  previousLabel="Anterior"
+                  nextLabel="Siguiente"
+                  (pageChange)="p = $event"
+                ></pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agregar producto -->
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">Agregar Producto</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="saveProduct()" [formGroup]="formData">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="control-label">Descripción</label>
+              <input
+                class="form-control"
+                placeholder="Ingrese una descripción"
+                type="text"
+                name="title"
+                formControlName="productoDescripcion"
+                autocomplete="off"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="control-label" for="rubro">Rubro</label>
+              <select
+                class="form-select"
+                id="rubro"
+                formControlName="productRubroId"
+              >
+                <option [value]="null" selected disabled>
+                  Seleccione un rubro
+                </option>
+                <option
+                  *ngFor="let rubro of rubros"
+                  [value]="rubro.rubroProductoIdentity"
+                >
+                  {{ rubro.rubroDescripcion }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success" id="btn-save-event">
+          Guardar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+
+  <!-- Editar producto -->
+  <ng-template #content2 role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">Editar Producto</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="actualizarProducto()" [formGroup]="formData">
+        <input type="hidden" formControlName="productIdentity" />
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="control-label">Descripción</label>
+              <input
+                class="form-control"
+                [value]="selectedProduct.productoDescripcion"
+                type="text"
+                name="title"
+                formControlName="productoDescripcion"
+                autocomplete="off"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="control-label" for="rubro">Rubro</label>
+              <select
+                class="form-select"
+                id="rubro"
+                formControlName="productRubroId"
+              >
+                <option
+                  *ngFor="let rubro of rubros"
+                  [value]="rubro.rubroProductoIdentity"
+                >
+                  {{ rubro.rubroDescripcion }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success" id="btn-save-event">
+          Actualizar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+</div>

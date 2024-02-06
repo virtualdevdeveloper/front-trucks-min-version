@@ -1,0 +1,59 @@
+.btn-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.helper-colour {
+  background-color: #c0c0c0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.estadoPendiente {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #ffdddd;
+  color: #8b0000;
+}
+
+.estadoPreAutorizado {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #fff7b3;
+  color: #996300;
+}
+
+.estadoAutorizado {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estadoActivo {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.estadoCancelado {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #ffdddd;
+  color: #8b0000;
+}
+
+.estadoEntregado {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estadoDesconocido {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-color: lightgray;
+  color: black;
+}

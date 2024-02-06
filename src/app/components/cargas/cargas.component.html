@@ -1,0 +1,909 @@
+<div class="container-fluid">
+  <!-- <app-page-title title="Cargas"></app-page-title> -->
+  <h1>Cargas</h1>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar correo"
+                    [(ngModel)]="term"
+                  />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-rounded mb-2"
+                  style="margin-right: 1rem"
+                  (click)="openModal(content2)"
+                >
+                  <i class="mdi mdi-map-marker me-1"></i> Buscar por localidad
+                </button>
+                <button
+                  *ngIf="!isAdmin"
+                  type="button"
+                  class="btn btn-success btn-rounded mb-2 mr-2"
+                  (click)="openModal(content)"
+                >
+                  <i class="mdi mdi-plus me-1"></i> Nueva carga
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th>Fecha de Registro</th>
+                  <th>Dador de Carga</th>
+                  <th>Inicio</th>
+                  <th>Finalización</th>
+                  <th>Origen</th>
+                  <th>Destino</th>
+                  <th>Producto</th>
+                  <!-- <th>Cantidad</th> -->
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let carga of cargas
+                      | customfilter : term : 'usuarioEmail'
+                      | paginate : { itemsPerPage: 10, currentPage: p }
+                  "
+                >
+                  <td>{{ carga.fechaRegistracionCarga | dateFormat }}</td>
+                  <td>{{ carga.usuarioEmail }}</td>
+                  <td>
+                    <ng-container *ngIf="carga.fechaInicioCarga; else noFecha">
+                      {{ carga.fechaInicioCarga | dateFormat }}
+                    </ng-container>
+                    <ng-template #noFecha> No hay fecha </ng-template>
+                  </td>
+                  <td>
+                    <ng-container *ngIf="carga.fechaFinCarga; else noFecha">
+                      {{ carga.fechaFinCarga | dateFormat }}
+                    </ng-container>
+                    <ng-template #noFecha> No hay fecha </ng-template>
+                  </td>
+                  <td>
+                    <p class="mb-0">
+                      {{ carga.cargaProvinciaLocalidadNombre }}
+                    </p>
+                    <p class="mb-1">{{ carga.cargaLocalidadOrigenNombre }}</p>
+                  </td>
+                  <td>
+                    <p class="mb-0">{{ carga.cargaProvinciaDestinoNombre }}</p>
+                    <p class="mb-1">{{ carga.cargaLocalidadDestinoNombre }}</p>
+                  </td>
+                  <td>{{ carga.cargaProductoNombre }}</td>
+                  <!-- <td>{{ carga.cargaCantidadProducto }}</td> -->
+                  <td>
+                    <span [ngClass]="getEstadoClass(carga.cargaEstado)">
+                      {{ getEstadoText(carga.cargaEstado) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a
+                        href="javascript: void(0);"
+                        class="dropdown-toggle card-drop"
+                        data-toggle="dropdown"
+                        ngbDropdownToggle
+                        aria-expanded="false"
+                      >
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        ngbDropdownMenu
+                      >
+                        <li>
+                          <a
+                            href="javascript: void(0);"
+                            (click)="openModalDetails(content3, carga)"
+                            class="dropdown-item"
+                            ><i class="bx bx-detail text-primary me-1"></i>
+                            Detalles</a
+                          >
+                        </li>
+                        <li *ngIf="!isAdmin">
+                          <a
+                            href="javascript: void(0);"
+                            class="dropdown-item"
+                            (click)="cambioRapidoDeEstado(content4, carga)"
+                            ><i class="bx bxs-analyse text-secondary me-1"></i>
+                            Cambiar Estado</a
+                          >
+                        </li>
+                        <li *ngIf="!isAdmin">
+                          <a
+                            href="javascript: void(0);"
+                            class="dropdown-item"
+                            (click)="editarCarga(content6, carga)"
+                            ><i class="fas fa-pencil-alt text-success me-1"></i>
+                            Editar</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="!loadedData">
+            <div class="d-flex align-items-center justify-content-center">
+              <span class="loader"></span>
+            </div>
+          </div>
+          <div *ngIf="loadedData">
+            <pagination-controls
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              (pageChange)="p = $event"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agregar Carga -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Agregar Carga</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body agregar-carga-body">
+    <form (ngSubmit)="saveCarga()" [formGroup]="formData">
+      <div class="row">
+        <div class="col-12">
+          <!-- Header -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="fechaInicio" class="control-label"
+                  >Fecha de Inicio <span>*</span></label
+                >
+                <input
+                  type="date"
+                  id="fechaInicio"
+                  name="fechaInicio"
+                  class="form-control"
+                  formControlName="fechaInicioCarga"
+                />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="fechaFin" class="control-label"
+                  >Fecha de Finalización <span>*</span></label
+                >
+                <input
+                  type="date"
+                  id="fechaFin"
+                  name="fechaFin"
+                  class="form-control"
+                  formControlName="fechaFinCarga"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label">Producto <span>*</span></label>
+                <select
+                  class="form-select"
+                  id="product"
+                  formControlName="cargaProductoId"
+                >
+                  <option selected disabled>Seleccione su producto</option>
+                  <option
+                    *ngFor="let producto of listaProductos"
+                    [value]="producto.productIdentity"
+                  >
+                    {{ producto.productoDescripcion }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <!--
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="control-label">Cantidad de productos</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese la cantidad de productos"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="cargaCantidadProducto"
+                  />
+                </div>
+              </div>
+              -->
+            <div class="col-md-6">
+              <div class="mb-3 d-flex align-items-center">
+                <label class="control-label me-2 mb-0"
+                  >¿Es sustancia peligrosa?</label
+                >
+              </div>
+              <div
+                class="form-check"
+                style="display: flex; align-items: center; padding: 0"
+              >
+                <div style="display: flex; gap: 2rem">
+                  <p>Sustancia peligrosa</p>
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="
+                      formData.get('cargaEsSustanciaPeligrosa')?.value === '1'
+                    "
+                    (change)="toggleCheckboxValue($event)"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label"
+              >Cantidad de camiones necesarios <span>*</span></label
+            >
+            <input
+              class="form-control"
+              placeholder="Ingrese la cantidad de camiones necesarios"
+              type="number"
+              name="title"
+              autocomplete="off"
+              formControlName="cargaCantidadCamiones"
+            />
+            <div
+              *ngIf="
+                formData.get('cargaCantidadCamiones').invalid &&
+                formData.get('cargaCantidadCamiones').touched
+              "
+              class="text-danger"
+            >
+              La cantidad de camiones debe ser especificada
+            </div>
+          </div>
+
+          <div class="row gx-2 mb-3">
+            <div class="col-md-6">
+              <div class="helper-colour">
+                <!-- País de Origen -->
+                <div class="mb-3">
+                  <label class="control-label" for="country-origin"
+                    >País de Origen</label
+                  >
+                  <select
+                    class="form-select"
+                    id="country-origin"
+                    formControlName="cargaPaisOrigenId"
+                    [disabled]
+                  >
+                    <option selected value="1">Argentina</option>
+                  </select>
+                </div>
+
+                <!-- Provincia de Origen -->
+                <div class="mb-3">
+                  <label class="control-label" for="province-origin"
+                    >Provincia de Origen <span>*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="province-origin"
+                    formControlName="cargaProvinciaLocalidadId"
+                    (change)="
+                      onChangeProvincia($any($event.target).value, true)
+                    "
+                  >
+                    <option value="" selected disabled>
+                      Seleccione una provincia
+                    </option>
+                    <option
+                      *ngFor="let provincia of listaProvincias"
+                      [value]="provincia.provinciaId"
+                    >
+                      {{ provincia.provinciaNombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Localidad de Origen -->
+                <div class="mb-3">
+                  <label class="control-label" for="location-origin"
+                    >Localidad de Origen <span>*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="location-origin"
+                    formControlName="cargaLocalidadOrigenId"
+                    [disabled]="
+                      formData.get('cargaProvinciaLocalidadId').value === ''
+                    "
+                  >
+                    <option value="" selected disabled>
+                      Seleccione una localidad
+                    </option>
+                    <option
+                      *ngFor="let localidad of listaLocalidadesOrigin"
+                      [value]="localidad.localidadId"
+                    >
+                      {{ localidad.localidadNombre }}
+                    </option>
+                  </select>
+                </div>
+                <!-- Dirección de Origen -->
+                <div class="mb-3">
+                  <label class="control-label"
+                    >Dirección de Origen <span>*</span></label
+                  >
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese la dirección de origen"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="cargaOrigenDireccion"
+                  />
+                  <div
+                    *ngIf="
+                      formData.get('cargaOrigenDireccion').invalid &&
+                      formData.get('cargaOrigenDireccion').touched
+                    "
+                    class="text-danger"
+                  >
+                    La dirección de origen es obligatoria
+                  </div>
+                </div>
+              </div>
+              <div class="mb-1 mt-3">
+                <label class="control-label" for=""
+                  >Indicaciones dirección de origen</label
+                >
+                <textarea
+                  class="form-control"
+                  id=""
+                  rows="3"
+                  style="resize: none"
+                  formControlName="cargaOrigenIndicaciones"
+                  placeholder="(Opcional) Ingrese indicaciones para la dirección de origen"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="helper-colour">
+                <!-- País de Destino -->
+                <div class="mb-3">
+                  <label class="control-label" for="country-destiny"
+                    >País de Destino</label
+                  >
+                  <select
+                    class="form-select"
+                    id="country-destiny"
+                    formControlName="cargaPaisDestino"
+                    [disabled]
+                  >
+                    <option selected value="1">Argentina</option>
+                  </select>
+                </div>
+
+                <!-- Provincia de Destino -->
+                <div class="mb-3">
+                  <label class="control-label" for="province-arrival"
+                    >Provincia de Destino <span>*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="province-arrival"
+                    formControlName="cargaProvinciaDestino"
+                    (change)="
+                      onChangeProvincia($any($event.target).value, false)
+                    "
+                  >
+                    <option value="" selected disabled>
+                      Seleccione una provincia
+                    </option>
+                    <option
+                      *ngFor="let provincia of listaProvincias"
+                      [value]="provincia.provinciaId"
+                    >
+                      {{ provincia.provinciaNombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Localidad de Destino -->
+                <div class="mb-3">
+                  <label class="control-label" for="location-arrival"
+                    >Localidad de Destino <span>*</span></label
+                  >
+                  <select
+                    class="form-select"
+                    id="location-arrival"
+                    formControlName="cargaLocalidadDestino"
+                    [disabled]="
+                      formData.get('cargaProvinciaDestino').value === ''
+                    "
+                  >
+                    <option value="" selected disabled>
+                      Seleccione una localidad
+                    </option>
+                    <option
+                      *ngFor="let localidad of listaLocalidadesArrival"
+                      [value]="localidad.localidadId"
+                    >
+                      {{ localidad.localidadNombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Dirección de Destino -->
+                <div class="mb-3">
+                  <label class="control-label"
+                    >Dirección de Destino <span>*</span></label
+                  >
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese la dirección de destino"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="cargaDestinoDireccion"
+                  />
+                  <div
+                    *ngIf="
+                      formData.get('cargaDestinoDireccion').invalid &&
+                      formData.get('cargaDestinoDireccion').touched
+                    "
+                    class="text-danger"
+                  >
+                    La dirección de destino es obligatoria
+                  </div>
+                </div>
+              </div>
+              <div class="mb-1 mt-3">
+                <label class="control-label" for=""
+                  >Indicaciones dirección de destino</label
+                >
+                <textarea
+                  class="form-control"
+                  id=""
+                  rows="3"
+                  style="resize: none"
+                  formControlName="cargaDestinoIndicaciones"
+                  placeholder="(Opcional) Ingrese indicaciones para la dirección de destino"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label" for="">Nota</label>
+            <textarea
+              class="form-control"
+              id=""
+              rows="3"
+              style="resize: none"
+              placeholder="(Opcional) Ingrese una nota para los transportistas"
+              formControlName="cargaNota"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" id="btn-save-event" [disabled]="!formData.valid">
+        Guardar
+      </button>
+    </form>
+    <!-- <button class="btn btn-primary" (click)="checkEstado()">
+        Check Estado
+      </button> -->
+  </div>
+</ng-template>
+
+<!-- Buscar por Localidad-->
+<ng-template #content2 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Buscar por Localidad</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="closeModalSearchByLocation()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="searchByLocation()" [formGroup]="formSearchByLocation">
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="country-origin">País</label>
+                <select disabled class="form-select" id="country-origin">
+                  <option selected>Argentina</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="provincia">Provincia</label>
+                <select
+                  class="form-select"
+                  id="provincia"
+                  (change)="onChangeProvincia($any($event.target).value, true)"
+                  formControlName="provincia"
+                >
+                  <option selected disabled>Seleccione una provincia</option>
+                  <!-- Provincias -->
+                  <option
+                    *ngFor="let provincia of listaProvincias"
+                    [value]="provincia.provinciaId"
+                  >
+                    {{ provincia.provinciaNombre }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label" for="city">Localidad</label>
+            <select class="form-select" id="city" formControlName="localidad">
+              <option selected disabled>Seleccione una localidad</option>
+              <!-- Localidades -->
+              <option
+                *ngFor="let localidad of listaLocalidadesOrigin"
+                [value]="localidad.localidadId"
+              >
+                {{ localidad.localidadNombre }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="control-label me-2 mb-0">Buscar por origen</label>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                formControlName="checkboxOrigen"
+              />
+            </div>
+          </div>
+          <div class="mb-3 d-flex align-items-center">
+            <label class="control-label me-2 mb-0">Buscar por destino</label>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                formControlName="checkboxDestino"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-container">
+        <button
+          type="submit"
+          class="btn btn-success"
+          id="btn-save-event"
+          style="display: flex; align-items: center"
+        >
+          <i class="bx bx-search me-1"></i>
+          Buscar
+        </button>
+        <div *ngIf="showResetTableButton">
+          <button class="btn btn-danger" (click)="refreshView()">
+            Reiniciar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Detalles de la Carga -->
+<ng-template #content3 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Detalles de la carga</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12">
+        <div class="mb-3">
+          <label class="control-label" for="">Estado</label>
+          <p>
+            <span [ngClass]="getEstadoClass(selectedCarga.cargaEstado)">
+              {{ getEstadoText(selectedCarga.cargaEstado) }}
+            </span>
+          </p>
+        </div>
+        <!-- ngIf, si el estado es distinto de PENDIENTE y PRE-AUTORIZADO mostrar el Token -->
+        <div
+          class="mb-3"
+          *ngIf="
+            selectedCarga.cargaEstado !== 'PENDIENTE' &&
+            selectedCarga.cargaEstado !== 'PRE-AUTORIZADO'
+          "
+        >
+          <label class="control-label" for="">Token</label>
+          <p>
+            <b>{{ token }}</b>
+          </p>
+        </div>
+        <hr />
+        <div class="mb-3">
+          <label class="control-label" for="">Fecha de Registro</label>
+          <p>{{ selectedCarga.fechaRegistracionCarga }}</p>
+        </div>
+        <div class="mb-3">
+          <label class="control-label" for="">Dador de carga</label>
+          <p>{{ selectedCarga.usuarioEmail }}</p>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="control-label" for="">Fecha de Inicio</label>
+              <div>
+                <ng-container
+                  *ngIf="selectedCarga.fechaInicioCarga; else noFecha"
+                >
+                  {{ selectedCarga.fechaInicioCarga | dateFormat }}
+                </ng-container>
+                <ng-template #noFecha> No hay fecha </ng-template>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="control-label" for="">Fecha de Finalización</label>
+              <div>
+                <ng-container *ngIf="selectedCarga.fechaFinCarga; else noFecha">
+                  {{ selectedCarga.fechaFinCarga | dateFormat }}
+                </ng-container>
+                <ng-template #noFecha> No hay fecha </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="control-label" for="">Producto</label>
+          <p>Nombre de Producto: {{ selectedCarga.cargaProductoNombre }}</p>
+          <p>Rubro: {{ selectedRubro }}</p>
+        </div>
+        <div class="mb-3">
+          <label class="control-label" for="">Camiones necesarios</label>
+          <p>{{ selectedCarga.cargaCantidadCamiones }}</p>
+        </div>
+        <div class="mb-3">
+          <label class="control-label" for="">Material peligroso</label>
+          <p>
+            <span
+              *ngIf="
+                selectedCarga.cargaEsSustanciaPeligrosa === '0';
+                else peligro
+              "
+              >No</span
+            >
+            <ng-template #peligro>Sí</ng-template>
+          </p>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="control-label" for="">Origen</label>
+              <p>
+                País de Origen:
+                <span
+                  *ngIf="selectedCarga.cargaPaisOrigenId === '1'; else otroPais"
+                  >Argentina</span
+                >
+                <ng-template #otroPais>{{
+                  selectedCarga.cargaPaisOrigenId
+                }}</ng-template>
+              </p>
+
+              <p>
+                Provincia de Origen:
+                {{ selectedCarga.cargaProvinciaLocalidadNombre }}
+              </p>
+              <p>
+                Localidad de Origen:
+                {{ selectedCarga.cargaLocalidadOrigenNombre }}
+              </p>
+              <p>
+                Dirección de Origen: {{ selectedCarga.cargaOrigenDireccion }}
+              </p>
+              <p>
+                Indicaciones de Origen:
+                {{ selectedCarga.cargaOrigenIndicaciones }}
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="control-label" for="">Destino</label>
+              <p>
+                País de Origen:
+                <span
+                  *ngIf="selectedCarga.cargaPaisDestino === '1'; else otroPais"
+                  >Argentina</span
+                >
+                <ng-template #otroPais>{{
+                  selectedCarga.cargaPaisDestino
+                }}</ng-template>
+              </p>
+              <p>
+                Provincia de Destino:
+                {{ selectedCarga.cargaProvinciaDestinoNombre }}
+              </p>
+              <p>
+                Localidad de Destino:
+                {{ selectedCarga.cargaLocalidadDestinoNombre }}
+              </p>
+              <p>
+                Dirección de Destino: {{ selectedCarga.cargaDestinoDireccion }}
+              </p>
+              <p>
+                Indicaciones de Destino:
+                {{ selectedCarga.cargaDestinoIndicaciones }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="" class="control-label">Nota</label>
+          <p>{{ selectedCarga.cargaNota }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Cambio rápido de Estado -->
+<ng-template #content4 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Cambio de Estado</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="closeModalEstado()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formCambioEstado" (ngSubmit)="cambioRapidoCarga()">
+      <div class="row">
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="control-label" for="">Estado Actual</label>
+            <p>{{ selectedCarga.cargaEstado }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="control-label" for="">Nuevo Estado</label>
+            <select name="" id="" class="form-select" formControlName="estado">
+              <option value="" selected disabled>
+                Seleccione el estado que desea reemplazar
+              </option>
+              <option value="PENDIENTE">Pendiente</option>
+              <option value="PRE-AUTORIZADO">Pre-Autorizado</option>
+              <option value="AUTORIZADO">Autorizado</option>
+              <option value="ACTIVO">En Curso</option>
+              <option
+                *ngIf="selectedCarga.cargaEstado == 'PENDIENTE'"
+                value="CANCELADO"
+              >
+                Cancelado
+              </option>
+              <option value="ENTREGADO">Entregado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" id="btn-save-event">
+        Cambiar estado
+      </button>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Editar Carga -->
+<ng-template #content6 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Editar Carga</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="closeModalEdit()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="actualizarCarga()" [formGroup]="formDataEdit">
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for=""
+                  >Indicaciones dirección de origen</label
+                >
+                <textarea
+                  class="form-control"
+                  id=""
+                  rows="3"
+                  style="resize: none"
+                  formControlName="mensajeOrigen"
+                  placeholder="(Opcional) Ingrese indicaciones para la dirección de origen"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for=""
+                  >Indicaciones dirección de destino</label
+                >
+                <textarea
+                  class="form-control"
+                  id=""
+                  rows="3"
+                  style="resize: none"
+                  formControlName="mensajeDestino"
+                  placeholder="(Opcional) Ingrese indicaciones para la dirección de destino"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label" for="">Nota</label>
+            <textarea
+              class="form-control"
+              id=""
+              rows="3"
+              style="resize: none"
+              placeholder="(Opcional) Ingrese una nota para los transportistas"
+              formControlName="nota"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" id="btn-save-event">
+        Actualizar
+      </button>
+    </form>
+  </div>
+</ng-template>

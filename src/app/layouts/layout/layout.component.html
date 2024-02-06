@@ -1,0 +1,14 @@
+<div>
+    <!-- *ngIf, si es Login || Registro || Forgot entonces no mostrar -->
+    <p>Topbar: <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button></p>
+    <ul>
+        <li>
+            <a routerLink="/dashboard">Dashboard</a>
+            <a routerLink="/cargas">Cargas</a>
+            <a routerLink="/productos">Productos</a>
+            <a routerLink="/notificaciones">Notificaciones</a>
+            <a routerLink="/pagos">Pagos</a>
+        </li>
+    </ul>
+    <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,343 @@
+<div class="heading-section">
+  <h1>Notificaciones</h1>
+  <button
+    *ngIf="!isAdmin"
+    class="btn btn-primary"
+    (click)="nuevoMensaje(content2)"
+  >
+    Nuevo aviso<i class="bx bxs-comment-add"></i>
+  </button>
+</div>
+
+<div *ngIf="!isAdmin" style="margin-left: 0.75rem">
+  <ng-container *ngIf="cantidadNotificaciones === 0; else hayNotificaciones">
+    <p>Estado actual: <b>No hay notificaciones</b></p>
+  </ng-container>
+
+  <ng-template #hayNotificaciones>
+    <p>
+      Estado actual: <b>Hay {{ cantidadNotificaciones }} notificaciones</b>
+    </p>
+    <div *ngIf="!loadedData">
+      <div class="d-flex align-items-center justify-content-center">
+        <span class="loader"></span>
+      </div>
+    </div>
+    <div *ngFor="let aviso of avisos" class="alert alert-primary">
+      <div>
+        <p><b>Notificación</b></p>
+        <ng-container
+          *ngIf="
+            aviso.avisoDescripcion ===
+              '¡Un transportista ha reservado tu carga!';
+            else elMensajeEsPersonalizadoSecundario
+          "
+        >
+          <p>
+            La carga que inicia el
+            <b>{{ aviso.cargaPorAutorizar?.fechaInicioCarga }}</b> y que
+            finaliza el <b>{{ aviso.cargaPorAutorizar?.fechaFinCarga }}</b
+            >. Con origen en
+            <b
+              >{{ aviso.cargaPorAutorizar?.cargaLocalidadOrigenNombre }},
+              {{ aviso.cargaPorAutorizar?.cargaProvinciaLocalidadNombre }}</b
+            >
+            y con destino en
+            <b
+              >{{ aviso.cargaPorAutorizar?.cargaLocalidadDestinoNombre }},
+              {{ aviso.cargaPorAutorizar?.cargaProvinciaDestinoNombre }}</b
+            >
+            fue solicitada por un transportista y se encuentra en estado
+            <b>{{ aviso.cargaPorAutorizar?.cargaEstado }}</b>
+          </p>
+        </ng-container>
+        <ng-template #elMensajeEsPersonalizadoSecundario>
+          <p>
+            Tienes un nuevo mensaje por parte del transportista. Acerca de la
+            carga que inicia el
+            <b>{{ aviso.cargaPorAutorizar?.fechaInicioCarga }}</b> y que
+            finaliza el <b>{{ aviso.cargaPorAutorizar?.fechaFinCarga }}</b
+            >. Con origen en
+            <b
+              >{{ aviso.cargaPorAutorizar?.cargaLocalidadOrigenNombre }},
+              {{ aviso.cargaPorAutorizar?.cargaProvinciaLocalidadNombre }}</b
+            >
+            y con destino en
+            <b
+              >{{ aviso.cargaPorAutorizar?.cargaLocalidadDestinoNombre }},
+              {{ aviso.cargaPorAutorizar?.cargaProvinciaDestinoNombre }}</b
+            >
+          </p>
+        </ng-template>
+        <hr />
+      </div>
+      <p>
+        <b>Fecha y Hora del mensaje</b>:
+        {{ aviso.avisoFechaHoraMensaje | formatDateMensaje }}
+      </p>
+      <p><b>Contenido</b>: {{ aviso.avisoDescripcion }}</p>
+
+      <div class="btn_container">
+        <!-- Si es mensaje genérico, muestro botones de Autorizar -->
+        <ng-container
+          *ngIf="
+            aviso.avisoDescripcion ===
+              '¡Un transportista ha reservado tu carga!';
+            else elMensajeEsPersonalizado
+          "
+        >
+          <button
+            class="btn btn-primary"
+            (click)="detallesUsuario(content, aviso.usuarioOrigenId)"
+          >
+            Detalles del Transportista
+          </button>
+          <button class="btn btn-success" (click)="autorizarCarga(aviso)">
+            Autorizar
+          </button>
+          <button class="btn btn-danger" (click)="noAutorizarCarga(aviso)">
+            No autorizar
+          </button>
+        </ng-container>
+        <ng-template #elMensajeEsPersonalizado>
+          <button
+            class="btn btn-primary"
+            (click)="detallesUsuario(content, aviso.usuarioOrigenId)"
+          >
+            Detalles del Transportista
+          </button>
+          <button class="btn btn-success" (click)="visto(aviso)">Visto</button>
+          <button
+            class="btn btn-success"
+            (click)="nuevoMensajeModal(content3, aviso, true)"
+          >
+            Responder
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<div *ngIf="isAdmin" style="margin-left: 0.75rem">
+  <p><i class="bx bx-code-alt"></i> En progreso ...</p>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th>Usuario de Origen</th>
+                  <th>Usuario de Destino</th>
+                  <th>Contenido del Mensaje</th>
+                  <th>Detalles Carga</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    Test
+                    <button class="btn btn-primary">
+                      <i class="bx bxs-info-circle"></i>
+                    </button>
+                  </td>
+                  <td>
+                    Test
+                    <button class="btn btn-primary">
+                      <i class="bx bxs-info-circle"></i>
+                    </button>
+                  </td>
+                  <td>Test</td>
+                  <td>
+                    <button class="btn btn-primary">
+                      <i class="bx bxs-detail"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Detalles del Usuario</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p><b>Nombre:</b> {{ selectedUser.usuarioNombre }}</p>
+    <p>
+      <b>Correo electrónico:</b>
+      <a [href]="'mailto:' + selectedUser.usuarioEmail">
+        {{ selectedUser.usuarioEmail }}</a
+      >
+    </p>
+    <p><b>Teléfono:</b> {{ selectedUser.usuarioTelefono }}</p>
+    <p>
+      <b>Domiciliado en:</b> {{ selectedUser.localidadNombre }},
+      {{ selectedUser.provinciaNombre }}
+    </p>
+  </div>
+</ng-template>
+
+<ng-template #content2 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Nuevo aviso</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p style="font-weight: 700">Cargas autorizadas/activas</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Correo transportista</th>
+          <th scope="col">Carga</th>
+          <th scope="col">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cargaFiltrada of cargasConId">
+          <td>
+            {{ cargaFiltrada.cargaTransportistaEmail }}<br /><button
+              class="custom-btn"
+              (click)="
+                detallesTransportista(
+                  cargaFiltrada.cargaTransportistaId,
+                  content4
+                )
+              "
+            >
+              <i class="bx bxs-detail"></i>Detalles
+            </button>
+          </td>
+          <td>
+            <p class="mb-1">
+              <b>Origen</b>: {{ cargaFiltrada.cargaProvinciaLocalidadNombre }},
+              {{ cargaFiltrada.cargaLocalidadOrigenNombre }}
+            </p>
+            <p class="mb-0">
+              <b>Destino</b>: {{ cargaFiltrada.cargaProvinciaDestinoNombre }},
+              {{ cargaFiltrada.cargaLocalidadDestinoNombre }}
+            </p>
+            <button
+              class="custom-btn"
+              (click)="detallesCarga(cargaFiltrada.cargaUniqId, content5)"
+            >
+              <i class="bx bxs-detail"></i>Detalles
+            </button>
+          </td>
+          <td>
+            <button
+              (click)="nuevoMensajeModal(content3, cargaFiltrada, false)"
+              class="btn btn-success"
+            >
+              Nuevo mensaje
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #content3 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Nuevo mensaje</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <textarea
+      class="form-control textarea-no-resize"
+      rows="10"
+      [(ngModel)]="avisoDescripcion"
+      placeholder="Escriba aquí el mensaje que desea enviar"
+    ></textarea>
+    <button (click)="mensajePersonalizado()" class="btn btn-success mt-3 mb-2">
+      Enviar mensaje
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #content4 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Detalles del Transportista</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p><b>Nombre:</b> {{ datosTransportista.usuarioNombre }}</p>
+    <p><b>Correo electrónico:</b> {{ datosTransportista.usuarioEmail }}</p>
+    <p><b>Número de teléfono:</b> {{ datosTransportista.usuarioTelefono }}</p>
+    <p>
+      <b>Tipo de Documento:</b> {{ datosTransportista.usuarioTipoDocumento }}
+    </p>
+    <p>
+      <b>Número de Documento:</b>
+      {{ datosTransportista.usuarioNumeroDocumento }}
+    </p>
+    <!-- Otros datos que se podrían agregar son: Domicilado en; y Estado de Cuenta -->
+  </div>
+</ng-template>
+
+<ng-template #content5 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Detalles de la Carga</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p>
+      <b>Estado: </b>
+      <span [ngClass]="getEstadoClass(datosCarga.cargaEstado)">
+        {{ getEstadoText(datosCarga.cargaEstado) }}
+      </span>
+    </p>
+    <p>
+      <b>Fecha de Registro de la Carga:</b>
+      {{ datosCarga.fechaRegistracionCarga }}
+    </p>
+    <p><b>Fecha de Inicio:</b> {{ datosCarga.fechaInicioCarga }}</p>
+    <p><b>Fecha de Fin:</b> {{ datosCarga.fechaFinCarga }}</p>
+    <hr />
+    <p>
+      <b>Origen:</b> {{ datosCarga.cargaLocalidadOrigenNombre }},
+      {{ datosCarga.cargaProvinciaLocalidadNombre }}
+    </p>
+    <p>
+      <b>Destino:</b> {{ datosCarga.cargaLocalidadDestinoNombre }},
+      {{ datosCarga.cargaProvinciaDestinoNombre }}
+    </p>
+    <hr />
+    <p><b>Producto:</b> {{ datosCarga.cargaProductoNombre }}</p>
+  </div>
+</ng-template>

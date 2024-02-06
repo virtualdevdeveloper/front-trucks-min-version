@@ -1,0 +1,85 @@
+<div class="container-fluid">
+  <div class="container contenido-dashboard-general">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="contenido-general-card card">
+          <h5><i class="bx bxs-truck"></i> Cargas</h5>
+          <p>
+            Agrega y gestiona tus cargas. Publica cargas para que un
+            transportista pueda retirarla facilmente. Filtra rápidamente por
+            localidad y asigna el transportista adecuado.
+          </p>
+          <div class="contenedor-button">
+            <button class="btn btn-primary" routerLink="/cargas">Cargas</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4" *ngIf="isAdmin">
+        <div class="contenido-general-card card">
+          <h5>
+            <i class="bx bxs-package"></i> Productos <span>Solo Admin</span>
+          </h5>
+          <p>
+            Agrega tu producto a la lista para poder asignarlo a una carga.
+            Gestiona y administra tus productos y tus rubros para describir con
+            gran presición el contenido de la carga.
+          </p>
+          <div class="contenedor-button">
+            <button class="btn btn-primary" routerLink="/productos">
+              Productos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4" *ngIf="!isAdmin">
+        <div class="contenido-general-card card">
+          <h5><i class="bx bxs-bell"></i> Notificaciones</h5>
+          <p>
+            Verifica en todo momento si existe un dador de carga interesado en
+            transportar tu carga. Acepta o rechaza solicitudes de carga y
+            notifica al transportista sobre la decisión tomada.
+          </p>
+          <div class="contenedor-button">
+            <button class="btn btn-primary" routerLink="/notificaciones">
+              Notificaciones
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4" *ngIf="isAdmin">
+        <div class="contenido-general-card card">
+          <h5>
+            <i class="bx bxs-credit-card"></i> Pagos <span>Solo Admin</span>
+          </h5>
+          <p>
+            Registra y controla los pagos efectuados por cada agente que usa el
+            sistema. Carga el pago del mes del usuario para habilitar o
+            deshabilitar el sistema.
+          </p>
+          <div class="contenedor-button">
+            <button class="btn btn-primary" routerLink="/pagos">Pagos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4" *ngIf="isAdmin">
+        <div class="contenido-general-card card">
+          <h5><i class="bx bxs-user"></i> Usuarios <span>Solo Admin</span></h5>
+          <p>
+            Gestiona y administra todo lo referente a los usuarios involucrados
+            en el sistema. Crea y edita usuarios y asignales los roles a cumplir
+            en el proceso de negocio.
+          </p>
+          <div class="contenedor-button">
+            <button class="btn btn-primary" routerLink="/usuarios">
+              Usuarios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

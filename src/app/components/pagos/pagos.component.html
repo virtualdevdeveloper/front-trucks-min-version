@@ -1,0 +1,105 @@
+<div class="container-fluid">
+  <h1>Pagos</h1>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar correo"
+                    [(ngModel)]="term"
+                  />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle table-nowrap">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Correo</th>
+                    <th>Fecha de Pago</th>
+                    <th>Estado del Pago</th>
+                    <th>Cambiar Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let pagos of listaPagos
+                        | customfilter : term : 'emailCliente'
+                        | paginate : { itemsPerPage: 10, currentPage: p }
+                    "
+                  >
+                    <td>
+                      {{ pagos.idCliente | slice : 0 : 15
+                      }}<button
+                        class="see-more"
+                        (click)="openModal(content, pagos)"
+                      >
+                        ...
+                      </button>
+                    </td>
+                    <td>{{ pagos.emailCliente }}</td>
+                    <td>{{ pagos.fechaPago }}</td>
+
+                    <td>
+                      <span [ngClass]="getEstadoClass(pagos.esPago)">{{
+                        pagos.esPago | customEsPago
+                      }}</span>
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-success"
+                        (click)="alternarEstado(pagos)"
+                      >
+                        <i
+                          class="bx bx-sync"
+                          style="font-size: 1rem; margin-top: 0.2rem"
+                        ></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              *ngIf="!loadedData"
+              class="d-flex align-items-center justify-content-center"
+            >
+              <span class="loader"></span>
+            </div>
+            <div *ngIf="loadedData">
+              <pagination-controls
+                previousLabel="Anterior"
+                nextLabel="Siguiente"
+                (pageChange)="p = $event"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #content role="document" let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title mt-0">ID del Usuario</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-hidden="true"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+    <div class="modal-body">
+      {{ selectedPago.idCliente }}
+    </div>
+  </ng-template>
+</div>
