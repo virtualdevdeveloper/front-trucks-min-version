@@ -1,14 +1,65 @@
-<div>
-    <!-- *ngIf, si es Login || Registro || Forgot entonces no mostrar -->
-    <p>Topbar: <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button></p>
-    <ul>
-        <li>
-            <a routerLink="/dashboard">Dashboard</a>
-            <a routerLink="/cargas">Cargas</a>
-            <a routerLink="/productos">Productos</a>
-            <a routerLink="/notificaciones">Notificaciones</a>
-            <a routerLink="/pagos">Pagos</a>
-        </li>
+<div class="contenido-layout">
+  <!-- *ngIf, si es Login || Registro || Forgot entonces no mostrar -->
+  
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button>
+  </div>
+
+  <!-- Sidebar -->
+  <div id="sidebar-menu">
+    <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
+      <!-- Titulos del Sidebar -->
+      <li class="menu-title">Dador de Carga / Admin</li>
+      <!-- Dashboards -->
+      <li>  
+        <a href="/dashboard" class="side-nav-link-ref" routerLinkActive="active">
+          <i class="bx bx-home-circle"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="/usuarios" class="side-nav-link-ref" routerLinkActive="active">
+          <i class="bx bxs-user"></i>
+          <span>Usuarios</span>
+        </a>
+      </li>
+      <!-- Apps -->
+      <li class="menu-title">Apps</li>
+      <li>
+        <a href="/productos" class="side-nav-link-ref" routerLinkActive="active">
+          <i class="bx bx-package"></i>
+          <span>Productos</span>
+        </a>
+      </li>
+      <li>
+        <a href="cargas" class="side-nav-link-ref" routerLinkActive="active">
+          <i class="bx bxs-truck"></i>
+          <span>Cargas</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/notificaciones"
+          class="side-nav-link-ref"
+          routerLinkActive="active"
+        >
+          <i class="bx bx-bell"></i>
+          <span>Notificaciones</span>
+          <span class="badge rounded-pill bg-success">X</span>
+        </a>
+      </li>
+      <li>
+        <a href="/pagos" class="side-nav-link-ref" routerLinkActive="active">
+          <i class="bx bx-wallet"></i>
+          <span>Pagos</span>
+        </a>
+      </li>
     </ul>
-    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Contenido -->
+  <div class="contenido">
+      <router-outlet></router-outlet>
+  </div>
 </div>

@@ -7,6 +7,7 @@ import { NotificacionesComponent } from './components/notificaciones/notificacio
 import { PagosComponent } from './components/pagos/pagos.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { UsuariosComponent } from './components/usuarios/usuarios.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'productos', component: ProductosComponent },
   { path: 'notificaciones', component: NotificacionesComponent },
   { path: 'pagos', component: PagosComponent },
+  { path: 'usuarios', component: UsuariosComponent },
   // { path: '**', redirectTo: '/404' }
 ];
 

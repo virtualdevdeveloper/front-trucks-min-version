@@ -1,0 +1,6 @@
+// custom-modal.scss
+
+// Anula el z-index del fondo oscuro de las ventanas modales
+.modal-backdrop {
+    z-index: 1 !important; // !important para asegurar que esta regla se aplique correctamente
+}
