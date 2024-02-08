@@ -22,6 +22,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { FormatDateMensajePipe } from './utils/pipes/format-date-mensaje.pipe';
 import { CustomFechaPagoPipe } from './utils/pipes/custom-fecha-pago.pipe';
 import { CustomEsPagoPipe } from './utils/pipes/custom-es-pago.pipe';
+import { FormatRolePipe } from './utils/pipes/format-role.pipe';
+import { TruncateEmailPipe } from './utils/pipes/truncate-email.pipe';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { CustomEsPagoPipe } from './utils/pipes/custom-es-pago.pipe';
     CustomfilterPipe,
     FormatDateMensajePipe,
     CustomFechaPagoPipe,
-    CustomEsPagoPipe
+    CustomEsPagoPipe,
+    FormatRolePipe,
+    TruncateEmailPipe
   ],
   imports: [
     BrowserModule,
@@ -49,7 +53,7 @@ import { CustomEsPagoPipe } from './utils/pipes/custom-es-pago.pipe';
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

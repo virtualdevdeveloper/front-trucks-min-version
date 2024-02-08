@@ -1,1 +1,726 @@
-<p>usuarios works!</p>
+<div>
+  <h1 class="title-views">Lista de Usuarios</h1>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+              <div class="search-box me-2 mb-2 d-inline-block">
+                <div class="position-relative">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar usuario"
+                    [(ngModel)]="term"
+                  />
+                  <i class="bx bx-search-alt search-icon"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-end">
+                <button
+                  type="button"
+                  class="btn btn-success btn-rounded mb-2 mr-2"
+                  (click)="openModal(content)"
+                >
+                  <i class="mdi mdi-plus me-1"></i> Nuevo Usuario
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle table-nowrap">
+              <thead>
+                <tr>
+                  <th>Nombre / Razón Social</th>
+                  <th>Rol</th>
+                  <th>Teléfono / Email</th>
+                  <th>Provincia y Localidad</th>
+                  <th>Dirección</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let customers of listaUsuarios
+                      | customfilter : term : 'usuarioNombre'
+                      | paginate : { itemsPerPage: 10, currentPage: p }
+                  "
+                >
+                  <td>{{ customers.usuarioNombre }}</td>
+                  <td>{{ customers.usuarioTipo | formatRole }}</td>
+                  <td>
+                    <p class="mb-1">{{ customers.usuarioTelefono }}</p>
+                    <p class="mb-0">{{ customers.usuarioEmail }}</p>
+                  </td>
+                  <td>
+                    <p class="mb-1">{{ customers.provinciaNombre }}</p>
+                    <p class="mb-0">{{ customers.localidadNombre }}</p>
+                  </td>
+                  <td>{{ customers.usuarioCalle }}</td>
+                  <td>
+                    <span [ngClass]="getEstadoClass(customers.usuarioEstado)">{{
+                      customers.usuarioEstado
+                    }}</span>
+                  </td>
+                  <td>
+                    <div class="dropdown" ngbDropdown placement="bottom-right">
+                      <a
+                        href="javascript: void(0);"
+                        class="dropdown-toggle card-drop"
+                        data-toggle="dropdown"
+                        ngbDropdownToggle
+                        aria-expanded="false"
+                      >
+                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                      </a>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        ngbDropdownMenu
+                      >
+                        <li>
+                          <a
+                            href="javascript: void(0);"
+                            (click)="openModalDetails(content2, customers)"
+                            class="dropdown-item"
+                            ><i class="bx bx-detail text-primary me-1"></i>
+                            Detalles</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            href="javascript: void(0);"
+                            class="dropdown-item"
+                            (click)="openModalEditCustomer(content3, customers)"
+                            ><i class="fas fa-pencil-alt text-success me-1"></i>
+                            Editar</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            *ngIf="!loadedData"
+            class="d-flex align-items-center justify-content-center"
+          >
+            <span class="loader"></span>
+          </div>
+          <div *ngIf="loadedData">
+            <pagination-controls
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              (pageChange)="p = $event"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agregar usuario -->
+<ng-template #content role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Agregar Usuario</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="closeModalAgregarUsuario()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="saveCustomer()" [formGroup]="formData">
+      <div class="row">
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="control-label">Nombre / Razón Social</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su nombre o razón social"
+              type="text"
+              name="title"
+              autocomplete="off"
+              formControlName="usuarioNombre"
+              required
+            />
+            <div
+              *ngIf="
+                formData.get('usuarioNombre').invalid &&
+                formData.get('usuarioNombre').touched
+              "
+              class="text-danger"
+            >
+              El nombre es obligatorio
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label">Email</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su email"
+              type="text"
+              name="email"
+              autocomplete="off"
+              formControlName="usuarioEmail"
+              required
+            />
+            <div
+              *ngIf="
+                formData.get('usuarioEmail').invalid &&
+                formData.get('usuarioEmail').touched
+              "
+              class="text-danger"
+            >
+              Ingresa un email válido
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label">Contraseña</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su contraseña"
+              type="password"
+              name="title"
+              autocomplete="off"
+              formControlName="usuarioPassword"
+              required
+            />
+            <div
+              *ngIf="
+                formData.get('usuarioPassword').invalid &&
+                formData.get('usuarioPassword').touched
+              "
+              class="text-danger"
+            >
+              La contraseña debe tener al menos 8 caracteres, una mayúscula y un
+              número
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="control-label" for="role">Rol</label>
+            <select
+              class="form-select"
+              id="role"
+              formControlName="usuarioTipo"
+              required
+            >
+              <option selected disabled>Seleccione un rol</option>
+              <option value="dador_carga">Dador de carga</option>
+              <option value="transportista">Transportista</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="">Tipo de Documento</label>
+                <select
+                  class="form-select"
+                  id=""
+                  formControlName="usuarioTipoDocumento"
+                  required
+                >
+                  <option selected disabled>
+                    Seleccione un tipo de documento
+                  </option>
+                  <option value="dni">DNI</option>
+                  <option value="cuil">CUIL</option>
+                  <option value="cuit">CUIT</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label">Número de Documento</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su número de documento"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioNumeroDocumento"
+                  required
+                  oninput="validity.valid||(value='');"
+                  min="0"
+                />
+                <div
+                  *ngIf="
+                    formData.get('usuarioNumeroDocumento').invalid &&
+                    formData.get('usuarioNumeroDocumento').touched
+                  "
+                  class="text-danger"
+                >
+                  El número de documento es obligatorio
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label">Teléfono celular</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su teléfono celular"
+              type="text"
+              name="phone"
+              autocomplete="off"
+              formControlName="usuarioTelefono"
+              required
+            />
+            <div
+              *ngIf="
+                formData.get('usuarioTelefono').invalid &&
+                formData.get('usuarioTelefono').touched
+              "
+              class="text-danger"
+            >
+              El número de teléfono es obligatorio
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="country-origin">País</label>
+                <select class="form-select" id="country-origin" disabled>
+                  <option selected value="1">Argentina</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="provincia">Provincia</label>
+                <select
+                  class="form-select"
+                  id="provincia"
+                  formControlName="usuarioProvincia"
+                  required
+                  (change)="onChangeProvincia($any($event.target).value)"
+                >
+                  <option selected disabled>Seleccione una provincia</option>
+                  <option
+                    *ngFor="let provincia of listaProvincias"
+                    [value]="provincia.provinciaId"
+                  >
+                    {{ provincia.provinciaNombre }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="city">Localidad</label>
+                <select
+                  class="form-select"
+                  id="city"
+                  formControlName="usuarioLocalidad"
+                  required
+                  [disabled]="formData.get('usuarioLocalidad')?.disabled"
+                >
+                  <option selected disabled>Seleccione una localidad</option>
+                  <option
+                    *ngFor="let localidad of listaLocalidades"
+                    [value]="localidad.localidadId"
+                  >
+                    {{ localidad.localidadNombre }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label">Código Postal</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su código postal"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCodigoPostal"
+                  required
+                  oninput="validity.valid||(value='');"
+                  min="0"
+                />
+                <div
+                  *ngIf="
+                    formData.get('usuarioCodigoPostal').invalid &&
+                    formData.get('usuarioCodigoPostal').touched
+                  "
+                  class="text-danger"
+                >
+                  El Código Postal es obligatorio
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="country-destiny"
+                  >Domicilio</label
+                >
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su domicilio"
+                  type="text"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCalle"
+                  required
+                />
+                <div
+                  *ngIf="
+                    formData.get('usuarioCalle').invalid &&
+                    formData.get('usuarioCalle').touched
+                  "
+                  class="text-danger"
+                >
+                  El dirección de domicilio es obligatoria
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="">Nro. / Altura</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su altura de domicilio"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCalleAltura"
+                  required
+                  oninput="validity.valid||(value='');"
+                  min="0"
+                />
+                <div
+                  *ngIf="
+                    formData.get('usuarioCalleAltura').invalid &&
+                    formData.get('usuarioCalleAltura').touched
+                  "
+                  class="text-danger"
+                >
+                  La altura del domicilio es obligatoria
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label" for="">Piso / Departamento</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su piso / departamento"
+              type="text"
+              name="title"
+              autocomplete="off"
+              formControlName="usuarioPisoDepartamento"
+            />
+          </div>
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-success"
+        id="btn-save-event"
+        [disabled]="!formData.valid"
+      >
+        Guardar usuario
+      </button>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Detalles del Usuario -->
+<ng-template #content2 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Detalles del Usuario</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="">Nombre / Razón Social</label>
+      <p>{{ selectedUser.usuarioNombre }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Rol</label>
+      <p>{{ selectedUser.usuarioTipo }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Estado</label>
+      <p>{{ selectedUser.usuarioEstado }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Teléfono</label>
+      <p>{{ selectedUser.usuarioTelefono }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Email</label>
+      <p>{{ selectedUser.usuarioEmail }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">País</label>
+      <p>Argentina</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Provincia</label>
+      <p>{{ selectedUser.provinciaNombre }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Localidad</label>
+      <p>{{ selectedUser.localidadNombre }}</p>
+    </div>
+
+    <div class="mb-3">
+      <label for="">Código Postal</label>
+      <p>{{ selectedUser.usuarioCodigoPostal }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Dirección</label>
+      <p>{{ selectedUser.usuarioCalle }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Altura</label>
+      <p>{{ selectedUser.usuarioCalleAltura }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Piso</label>
+      <p>{{ selectedUser.usuarioPisoDepartamento }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Tipo de Documento</label>
+      <p>{{ selectedUser.usuarioTipoDocumento }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="">Número de Documento</label>
+      <p>{{ selectedUser.usuarioNumeroDocumento }}</p>
+    </div>
+    <!--
+        <div class="mb-3">
+          <label for="">Fecha de Registro</label>
+          <p style="color: red">null</p>
+        </div>
+      -->
+  </div>
+</ng-template>
+
+<!-- Editar usuario -->
+<ng-template #content3 role="document" let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title mt-0">Editar Usuario</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="editarCustomer()" [formGroup]="formDataEdit">
+      <div class="row">
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="control-label">Nombre / Razón Social</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su nombre o razón social"
+              type="text"
+              name="title"
+              autocomplete="off"
+              formControlName="usuarioNombre"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="control-label">Email</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su email"
+              type="text"
+              name="email"
+              autocomplete="off"
+              formControlName="usuarioEmail"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="control-label" for="role">Rol</label>
+            <select class="form-select" id="role" formControlName="usuarioTipo">
+              <option *ngFor="let role of roles" [value]="role.value">
+                {{ role.display }}
+              </option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="">Tipo de Documento</label>
+                <select
+                  class="form-select"
+                  id=""
+                  formControlName="usuarioTipoDocumento"
+                >
+                  <option selected disabled>
+                    Seleccione un tipo de documento
+                  </option>
+                  <option value="dni">DNI</option>
+                  <option value="cuil">CUIL</option>
+                  <option value="cuit">CUIT</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label">Número de Documento</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su número de documento"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioNumeroDocumento"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label">Teléfono celular</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su teléfono celular"
+              type="text"
+              name="phone"
+              autocomplete="off"
+              formControlName="usuarioTelefono"
+            />
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="country-origin">País</label>
+                <select class="form-select" id="country-origin">
+                  <option selected value="1">Argentina</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="provincia">Provincia</label>
+                <select
+                  class="form-select"
+                  id="provincia"
+                  formControlName="usuarioProvincia"
+                  (change)="onChangeProvinciaEdicion($any($event.target).value)"
+                >
+                  <option selected disabled>Seleccione una provincia</option>
+                  <option
+                    *ngFor="let provincia of listaProvincias"
+                    [value]="provincia.provinciaId"
+                  >
+                    {{ provincia.provinciaNombre }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="city">Localidad</label>
+                <select
+                  class="form-select"
+                  id="city"
+                  formControlName="usuarioLocalidad"
+                  [disabled]="formData.get('usuarioLocalidad')?.disabled"
+                >
+                  <option selected disabled>Seleccione una localidad</option>
+                  <option
+                    *ngFor="let localidad of listaLocalidades"
+                    [value]="localidad.localidadId"
+                  >
+                    {{ localidad.localidadNombre }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label">Código Postal</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su código postal"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCodigoPostal"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="country-destiny"
+                  >Domicilio</label
+                >
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su domicilio"
+                  type="text"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCalle"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="control-label" for="">Domicilio altura</label>
+                <input
+                  class="form-control"
+                  placeholder="Ingrese su altura de domicilio"
+                  type="number"
+                  name="title"
+                  autocomplete="off"
+                  formControlName="usuarioCalleAltura"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="control-label" for="">Piso / Departamento</label>
+            <input
+              class="form-control"
+              placeholder="Ingrese su piso / departamento"
+              type="text"
+              name="title"
+              autocomplete="off"
+              formControlName="usuarioPisoDepartamento"
+            />
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" id="btn-save-event">
+        Actualizar usuario
+      </button>
+    </form>
+  </div>
+</ng-template>

@@ -51,7 +51,9 @@ export class LoginComponent implements OnInit {
         .subscribe(
           (data) => {
             console.log(data);
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/dashboard']).then(() => {
+              window.location.reload();
+            });
           },
           (error) => {
             this.error = error.error.excepcion;

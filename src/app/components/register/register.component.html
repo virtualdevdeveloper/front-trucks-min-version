@@ -1,1 +1,364 @@
-<p>register works!</p>
+<div class="account-pages my-1 pt-sm-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card overflow-hidden">
+          <div class="bg-soft bg-primary">
+            <div class="row">
+              <div class="col-7">
+                <div class="text-primary p-4">
+                  <h5 class="text-primary">Registro</h5>
+                  <p>
+                    Registrate como transportista o dador de carga y forma parte
+                    de MUEVE
+                  </p>
+                </div>
+              </div>
+              <div class="col-5 align-self-end">
+                <img
+                  src="assets/images/login/pattern_4.png"
+                  alt=""
+                  class="img-fluid"
+                  style="pointer-events: none"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div>
+              <a routerLink="/">
+                <div class="avatar-md profile-user-wid mb-4">
+                  <span class="avatar-title rounded-circle bg-light">
+                    <img
+                      src="assets/images/login/mueve_circle.png"
+                      alt=""
+                      class=""
+                      height="34"
+                    />
+                  </span>
+                </div>
+              </a>
+            </div>
+            <div class="p-2">
+              <form
+                class="needs-validation"
+                name="signupForm"
+                [formGroup]="signupForm"
+                (ngSubmit)="onSubmit()"
+                novalidate
+              >
+                <ngb-alert
+                  type="success"
+                  *ngIf="successmsg"
+                  [dismissible]="false"
+                  >Registro exitoso
+                </ngb-alert>
+
+                <ngb-alert type="danger" *ngIf="error" [dismissible]="false">{{
+                  error
+                }}</ngb-alert>
+
+                <div class="mb-3">
+                  <label class="control-label">Nombre / Razón Social</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su nombre o razón social"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioNombre"
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioNombre').invalid &&
+                      signupForm.get('usuarioNombre').touched
+                    "
+                    class="text-danger"
+                  >
+                    El nombre es obligatorio
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">Email</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su email"
+                    type="text"
+                    name="email"
+                    autocomplete="off"
+                    formControlName="usuarioEmail"
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioEmail').invalid &&
+                      signupForm.get('usuarioEmail').touched
+                    "
+                    class="text-danger"
+                  >
+                    Ingresa un email válido
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">Contraseña</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su contraseña"
+                    type="password"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioPassword"
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioPassword').invalid &&
+                      signupForm.get('usuarioPassword').touched
+                    "
+                    class="text-danger"
+                  >
+                    La contraseña debe tener al menos 8 caracteres, una
+                    mayúscula y un número
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label" for="role">Rol</label>
+                  <select
+                    class="form-select"
+                    id="role"
+                    formControlName="usuarioTipo"
+                    required
+                  >
+                    <option selected disabled>Seleccione un rol</option>
+                    <option value="dador_carga">Dador de carga</option>
+                    <option value="transportista">Transportista</option>
+                    <!-- <option value="admin">Administrador</option> -->
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="">Tipo de Documento</label>
+                  <select
+                    class="form-select"
+                    id=""
+                    formControlName="usuarioTipoDocumento"
+                    required
+                  >
+                    <option selected disabled>
+                      Seleccione un tipo de documento
+                    </option>
+                    <option value="dni">DNI</option>
+                    <option value="cuil">CUIL</option>
+                    <option value="cuit">CUIT</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label">Número de Documento</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su número de documento"
+                    type="number"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioNumeroDocumento"
+                    required
+                    oninput="validity.valid||(value='');"
+                    min="0"
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioNumeroDocumento').invalid &&
+                      signupForm.get('usuarioNumeroDocumento').touched
+                    "
+                    class="text-danger"
+                  >
+                    El número de documento es obligatorio
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label">Teléfono celular</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su teléfono celular"
+                    type="text"
+                    name="phone"
+                    autocomplete="off"
+                    formControlName="usuarioTelefono"
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioTelefono').invalid &&
+                      signupForm.get('usuarioTelefono').touched
+                    "
+                    class="text-danger"
+                  >
+                    El número de teléfono es obligatorio
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="country-origin">País</label>
+                  <select class="form-select" id="country-origin" disabled>
+                    <option selected value="1">Argentina</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="provincia">Provincia</label>
+                  <select
+                    class="form-select"
+                    id="provincia"
+                    formControlName="usuarioProvincia"
+                    required
+                    (change)="onChangeProvincia($any($event.target).value)"
+                  >
+                    <option selected disabled>Seleccione una provincia</option>
+                    <option
+                      *ngFor="let provincia of listaProvincias"
+                      [value]="provincia.provinciaId"
+                    >
+                      {{ provincia.provinciaNombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="city">Localidad</label>
+                  <select
+                    class="form-select"
+                    id="city"
+                    formControlName="usuarioLocalidad"
+                    required
+                    [disabled]="signupForm.get('usuarioLocalidad')?.disabled"
+                  >
+                    <option selected disabled>Seleccione una localidad</option>
+                    <option
+                      *ngFor="let localidad of listaLocalidades"
+                      [value]="localidad.localidadId"
+                    >
+                      {{ localidad.localidadNombre }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label">Código Postal</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su código postal"
+                    type="number"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioCodigoPostal"
+                    required
+                    oninput="validity.valid||(value='');"
+                    min="0"
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioCodigoPostal').invalid &&
+                      signupForm.get('usuarioCodigoPostal').touched
+                    "
+                    class="text-danger"
+                  >
+                    El Código Postal es obligatorio
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="country-destiny"
+                    >Domicilio</label
+                  >
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su domicilio"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioCalle"
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioCalle').invalid &&
+                      signupForm.get('usuarioCalle').touched
+                    "
+                    class="text-danger"
+                  >
+                    El dirección de domicilio es obligatoria
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for="">Nro. / Altura</label>
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su altura de domicilio"
+                    type="number"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioCalleAltura"
+                    required
+                    oninput="validity.valid||(value='');"
+                    min="0"
+                  />
+                  <div
+                    *ngIf="
+                      signupForm.get('usuarioCalleAltura').invalid &&
+                      signupForm.get('usuarioCalleAltura').touched
+                    "
+                    class="text-danger"
+                  >
+                    La altura del domicilio es obligatoria
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="control-label" for=""
+                    >Piso / Departamento</label
+                  >
+                  <input
+                    class="form-control"
+                    placeholder="Ingrese su piso / departamento"
+                    type="text"
+                    name="title"
+                    autocomplete="off"
+                    formControlName="usuarioPisoDepartamento"
+                  />
+                </div>
+
+                <div class="mt-4 d-grid">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    [disabled]="!signupForm.valid"
+                  >
+                    Registrarse
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- end card -->
+
+        <div class="mt-5 text-center">
+          <p>
+            ¿Ya tienes una cuenta?
+            <a routerLink="/login" class="fw-medium text-primary">
+              Ingresa desde aquí</a
+            >
+          </p>
+        </div>
+        <!-- <p class="text-center">© {{ year }} VirtualDEV</p> -->
+      </div>
+      <!-- end col -->
+    </div>
+    <!-- end row -->
+  </div>
+  <!-- end container -->
+</div>

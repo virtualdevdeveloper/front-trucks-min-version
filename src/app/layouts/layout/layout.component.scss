@@ -1,30 +1,52 @@
 .contenido-layout {
-  position: relative;
-}
-.topbar {
-  background-color: red;
-  position: absolute;
-  right: 0;
-//   height: 50px; /* Altura del topbar */
-//   width: 100%;
-}
-#sidebar-menu {
-  width: fit-content;
-  position: relative;
-  padding-right: 3rem;
+  display: grid;
+  grid-template-columns: 0.2fr 1fr;
+  overflow-x: hidden;
   height: 100vh;
-  background-color: #2a3042;
-  li {
-    &:hover {
-      span,
-      i {
-        color: white;
-        transition: all 0.5s;
+  #sidebar-menu {
+    min-width: 250px;
+    background-color: #2a3042;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    li {
+      &:hover {
+        span,
+        i {
+          color: white;
+          transition: all 0.5s;
+        }
       }
     }
+    span,
+    i {
+      color: #6a7187;
+      font-weight: 500;
+    }
   }
-  span {
-    color: #7f8387;
-    font-weight: 500;
+
+  .contenido {
+    width: calc(100vw - 250px);
+    .topbar {
+      background-color: white;
+      box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.05);
+      padding: 1.25rem 2.5rem 1.25rem 0;
+      .btn-contain {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: .25rem;
+        i {
+          font-size: 1.4rem;
+        }
+        .btn-custom {
+          background-color: transparent;
+          border: none;
+        }
+      }
+    }
+    .contenido-total {
+      padding: 1.25rem;
+    }
   }
 }

@@ -1,33 +1,42 @@
-<div class="contenido-layout">
-  <!-- *ngIf, si es Login || Registro || Forgot entonces no mostrar -->
-  
-  <!-- Topbar -->
-  <div class="topbar">
-    <button class="btn btn-danger" (click)="logout()">Cerrar sesión</button>
-  </div>
-
-  <!-- Sidebar -->
-  <div id="sidebar-menu">
+<div class="contenido-layout" [class.contenido-layout]="!isAuthPage()">
+  <div id="sidebar-menu" *ngIf="!isAuthPage()">
     <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
+      <div class="navbar-brand-box">
+        <a routerLink="/" class="logo logo-dark">
+          <span class="logo-lg">
+            <img
+              src="assets/images/login/mueve_dark_mode.png"
+              alt=""
+              height="45"
+            />
+          </span>
+        </a>
+      </div>
       <!-- Titulos del Sidebar -->
-      <li class="menu-title">Dador de Carga / Admin</li>
+      <li class="menu-title" *ngIf="!isAdmin">Dador de Carga</li>
+      <li class="menu-title" *ngIf="isAdmin">Administrador</li>  
+      
       <!-- Dashboards -->
-      <li>  
+      <li>
         <a href="/dashboard" class="side-nav-link-ref" routerLinkActive="active">
           <i class="bx bx-home-circle"></i>
-          <span>Dashboard</span>
+          <span>Menú General</span>
         </a>
       </li>
-      <li>
+      <li *ngIf="isAdmin">
         <a href="/usuarios" class="side-nav-link-ref" routerLinkActive="active">
           <i class="bx bxs-user"></i>
           <span>Usuarios</span>
         </a>
       </li>
       <!-- Apps -->
-      <li class="menu-title">Apps</li>
-      <li>
-        <a href="/productos" class="side-nav-link-ref" routerLinkActive="active">
+      <li class="menu-title">Aplicaciones</li>
+      <li *ngIf="isAdmin">
+        <a
+          href="/productos"
+          class="side-nav-link-ref"
+          routerLinkActive="active"
+        >
           <i class="bx bx-package"></i>
           <span>Productos</span>
         </a>
@@ -38,7 +47,7 @@
           <span>Cargas</span>
         </a>
       </li>
-      <li>
+      <li *ngIf="!isAdmin">
         <a
           href="/notificaciones"
           class="side-nav-link-ref"
@@ -49,7 +58,7 @@
           <span class="badge rounded-pill bg-success">X</span>
         </a>
       </li>
-      <li>
+      <li *ngIf="isAdmin">
         <a href="/pagos" class="side-nav-link-ref" routerLinkActive="active">
           <i class="bx bx-wallet"></i>
           <span>Pagos</span>
@@ -57,9 +66,23 @@
       </li>
     </ul>
   </div>
-
-  <!-- Contenido -->
   <div class="contenido">
+    <div class="topbar" *ngIf="!isAuthPage()">
+      <div ngbDropdown>
+        <div class="btn-contain">
+          <i class='bx bxs-user-circle'></i>
+          <button class="btn-custom" id="gfg" ngbDropdownToggle>
+            {{ userbymail | truncateEmail }}
+          </button>
+        </div>
+        <div ngbDropdownMenu="gfg">
+          <button ngbDropdownItem (click)="logout()" style="display: flex; gap: .25rem; align-items: center;">
+            <i class='bx bx-power-off' style="color: #d14e4e; font-size: 1rem; "></i>Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+    <div class="contenido-total">
       <router-outlet></router-outlet>
+    </div>
   </div>
 </div>
