@@ -145,4 +145,8 @@ export class ProductosComponent implements OnInit {
       this.loadedData = true;
     });
   }
+
+  onSearchInputChange(event: Event) {
+    this.p = 1;
+  }
 }

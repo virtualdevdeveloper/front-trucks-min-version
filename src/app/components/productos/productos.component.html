@@ -20,6 +20,7 @@
                         type="text"
                         class="form-control"
                         placeholder="Buscar producto"
+                        (input)="onSearchInputChange($event)"
                         [(ngModel)]="term"
                       />
                       <i class="bx bx-search-alt search-icon"></i>

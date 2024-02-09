@@ -309,4 +309,8 @@ export class UsuariosComponent implements OnInit {
       usuarioPisoDepartamento: [""],
     });
   }
+
+  onSearchInputChange(event: Event) {
+    this.p = 1;
+  }
 }

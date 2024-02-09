@@ -137,4 +137,8 @@ export class RubrosComponent implements OnInit {
     })
   }
 
+  onSearchInputChange(event: Event) {
+    this.p = 1;
+  }
+
 }

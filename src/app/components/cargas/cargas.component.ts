@@ -515,5 +515,7 @@ export class CargasComponent implements OnInit {
       estado: [""],
     });
   }
-
+  onSearchInputChange(event: Event) {
+    this.p = 1;
+  }
 }

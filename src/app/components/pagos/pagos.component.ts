@@ -51,4 +51,8 @@ export class PagosComponent implements OnInit {
         return "estadoPendiente";
     }
   }
+
+  onSearchInputChange(event: Event) {
+    this.p = 1;
+  }
 }
