@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: 'http://athenea.ddnsking.com:8083',
+  url: 'https://trucks-be.mueveapp.com.ar',
 };
