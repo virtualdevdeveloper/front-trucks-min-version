@@ -1,0 +1,20 @@
+@media (max-width:768px) {
+    .control-label, .custom-btn, .custom-text-redirect {
+        font-size: 1rem;
+    }
+    .form-control, .form-select {
+        font-size: 1rem;
+        width: 100%;
+    }
+    .custom-text-size {
+        h5 {
+            font-size: 1.2rem;
+        }
+        p {
+            font-size: 1rem;
+        }
+    }
+    .custom-padding {
+        padding: 0;
+    }
+}
