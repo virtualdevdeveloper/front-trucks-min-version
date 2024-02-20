@@ -168,7 +168,7 @@
 
 <ng-template #content role="document" let-modal>
   <div class="modal-header">
-    <h5 class="modal-title mt-0">Detalles del Usuario</h5>
+    <h5 class="modal-title mt-0">Detalles del Transportista</h5>
     <button
       type="button"
       class="btn-close"
@@ -188,6 +188,12 @@
     <p>
       <b>Domiciliado en:</b> {{ selectedUser.localidadNombre }},
       {{ selectedUser.provinciaNombre }}
+    </p>
+    <p>
+      <b>Tipo de Documento:</b> {{ selectedUser.usuarioTipoDocumento }}
+    </p>
+    <p>
+      <b>Número de Documento:</b> {{ selectedUser.usuarioNumeroDocumento }}
     </p>
   </div>
 </ng-template>
@@ -294,6 +300,10 @@
     <p><b>Nombre:</b> {{ datosTransportista.usuarioNombre }}</p>
     <p><b>Correo electrónico:</b> {{ datosTransportista.usuarioEmail }}</p>
     <p><b>Número de teléfono:</b> {{ datosTransportista.usuarioTelefono }}</p>
+    <p>
+      <b>Domiciliado en:</b> {{ datosTransportista.localidadNombre }},
+      {{ datosTransportista.provinciaNombre }}
+    </p>
     <p>
       <b>Tipo de Documento:</b> {{ datosTransportista.usuarioTipoDocumento }}
     </p>

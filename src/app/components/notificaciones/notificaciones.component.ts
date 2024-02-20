@@ -237,6 +237,7 @@ export class NotificacionesComponent implements OnInit {
   detallesTransportista(transportista, content: any) {
     this.crud.getUsuario(transportista).subscribe((res: any) => {
       this.datosTransportista = res;
+      console.log(this.datosTransportista);
       this.modalService.open(content);
     });
   }
