@@ -39,7 +39,7 @@ export class RegisterComponent implements OnInit {
     this.signupForm = this.formBuilder.group({
       usuarioNombre: ["", Validators.required],
       usuarioEmail: ["", [Validators.required, Validators.email]],
-      usuarioTipo: ["Seleccione un rol", Validators.required],
+      usuarioTipo: ["", Validators.required],
       usuarioTipoDocumento: [
         "Seleccione un tipo de documento",
         Validators.required,
@@ -81,41 +81,42 @@ export class RegisterComponent implements OnInit {
     
     if (this.signupForm.valid) {
       const user = this.signupForm.value;
-      this.crud.guardarUsuario(user).subscribe(
-        (response) => {
-          console.log("Usuario guardado exitosamente:", response);
-          Swal.fire({
-            title: '¡Éxito!',
-            text: 'El usuario se ha registrado. No tienes acceso a la plataforma hasta que realices el pago correspondiente.',
-            icon: 'success',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Volver'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.router.navigate(['/account/login']);
-            }
-          });
+      console.log(user)
+      // this.crud.guardarUsuario(user).subscribe(
+      //   (response) => {
+      //     console.log("Usuario guardado exitosamente:", response);
+      //     Swal.fire({
+      //       title: '¡Éxito!',
+      //       text: 'El usuario se ha registrado. No tienes acceso a la plataforma hasta que realices el pago correspondiente.',
+      //       icon: 'success',
+      //       showCancelButton: false,
+      //       confirmButtonColor: '#3085d6',
+      //       confirmButtonText: 'Volver'
+      //     }).then((result) => {
+      //       if (result.isConfirmed) {
+      //         this.router.navigate(['/account/login']);
+      //       }
+      //     });
           
-        },
-        (error) => {
-          console.error("Error al guardar el usuario:", error);
+      //   },
+      //   (error) => {
+      //     console.error("Error al guardar el usuario:", error);
         
-          if (error instanceof HttpErrorResponse && error.error === "EXIST") {
-            Swal.fire(
-              "¡Error!",
-              "El correo electrónico ya tiene una cuenta registrada.",
-              "warning"
-            );
-          } else {
-            Swal.fire(
-              "¡Error!",
-              "Error inesperado de servidor, contacte al soporte para solucionarlo.",
-              "warning"
-            );
-          }
-        }
-      );
+      //     if (error instanceof HttpErrorResponse && error.error === "EXIST") {
+      //       Swal.fire(
+      //         "¡Error!",
+      //         "El correo electrónico ya tiene una cuenta registrada.",
+      //         "warning"
+      //       );
+      //     } else {
+      //       Swal.fire(
+      //         "¡Error!",
+      //         "Error inesperado de servidor, contacte al soporte para solucionarlo.",
+      //         "warning"
+      //       );
+      //     }
+      //   }
+      // );
     } else {
       console.log("Formulario no válido");
       Swal.fire(

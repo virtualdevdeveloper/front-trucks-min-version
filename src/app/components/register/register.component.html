@@ -59,7 +59,38 @@
                 }}</ngb-alert>
 
                 <div class="mb-3">
-                  <label class="control-label" style="margin-top: .5rem;">Nombre / Razón Social</label>
+                  <label class="control-label mb-3" for="role" style="margin-top: 0.5rem"
+                    >Rol en la empresa</label
+                  >
+                  <div style="display: flex; gap: 1rem">
+                    <div class="input-radio">
+                      <label>
+                        <input
+                          type="radio"
+                          formControlName="usuarioTipo"
+                          value="dador_carga"
+                          class="form-check-input"
+                        />
+                        Dador de carga
+                      </label>
+                    </div>
+                    <div class="input-radio">
+                      <label>
+                        <input
+                          type="radio"
+                          formControlName="usuarioTipo"
+                          value="transportista"
+                          class="form-check-input"
+                        />
+                        Transportista
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label"
+                    >Nombre / Razón Social</label
+                  >
                   <input
                     class="form-control"
                     placeholder="Ingrese su nombre o razón social"
@@ -122,21 +153,6 @@
                     mayúscula y un número
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label class="control-label" for="role">Rol</label>
-                  <select
-                    class="form-select"
-                    id="role"
-                    formControlName="usuarioTipo"
-                    required
-                  >
-                    <option selected disabled>Seleccione un rol</option>
-                    <option value="dador_carga">Dador de carga</option>
-                    <option value="transportista">Transportista</option>
-                    <!-- <option value="admin">Administrador</option> -->
-                  </select>
-                </div>
-
                 <div class="mb-3">
                   <label class="control-label" for="">Tipo de Documento</label>
                   <select
